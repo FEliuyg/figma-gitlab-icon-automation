@@ -9,8 +9,8 @@ function setLocalData(key, data) {
 }
 // send data to UI
 function init() {
-    getLocalData("githubData").then((githubData) => {
-        figma.ui.postMessage({ type: "githubDataGot", githubData });
+    getLocalData("gitlabData").then((gitlabData) => {
+        figma.ui.postMessage({ type: "gitlabDataGot", gitlabData });
     });
     getLocalData("webhookData").then((webhookData) => {
         figma.ui.postMessage({ type: "webhookDataGot", webhookData });
@@ -18,8 +18,8 @@ function init() {
 }
 figma.ui.onmessage = (msg) => {
     switch (msg.type) {
-        case "setGithubData":
-            setLocalData("githubData", msg.githubData);
+        case "setGitlabData":
+            setLocalData("gitlabData", msg.gitlabData);
             break;
         case "setWebhookData":
             setLocalData("webhookData", msg.webhookData);

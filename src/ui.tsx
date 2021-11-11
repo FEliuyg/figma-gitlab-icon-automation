@@ -1,5 +1,5 @@
-import * as React from "react";
-import * as ReactDOM from "react-dom";
+import React from "react";
+import ReactDOM from "react-dom";
 import Settings from "./components/Settings";
 import Updator from "./components/Updator";
 import "../assets/ds.css";
@@ -52,13 +52,8 @@ class App extends React.Component {
     };
   }
   render() {
-    const {
-      updatorVisible,
-      gitlabData,
-      webhookData,
-      settingSwitch,
-      isDone,
-    } = this.state;
+    const { updatorVisible, gitlabData, webhookData, settingSwitch, isDone } =
+      this.state;
     const tabVisible = gitlabData && !isDone;
     return (
       <div className={"container " + (!tabVisible ? "" : "container-with-tab")}>

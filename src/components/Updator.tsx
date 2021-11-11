@@ -1,10 +1,9 @@
-import * as React from "react";
+import React from "react";
 import Webhook from "./Webhook";
 import {
   getContent,
-  getCommit,
   updatePackage,
-  createPullRequest,
+  createMergeRequest,
   createBranch,
 } from "../../api/gitlab";
 import { sendNotification } from "../../api/webhook";
@@ -24,20 +23,18 @@ export default class Settings extends React.Component<Props> {
     message: "",
     versionTip: "",
     messageTip: "",
-    sha: "",
     contents: { version: "0.0.0" },
     currentVersion: "",
     currentVersionTip: "",
     resultTip: "",
-    prUrl: "",
+    mrUrl: "",
     isSending: false,
     webhookData: null,
   };
   getVersion = async (gitlabData) => {
-    const { contents, sha } = await getContent("package.json", gitlabData);
+    const contents = await getContent("package.json", gitlabData);
     const currentVersion = contents.version;
     this.setState({
-      sha,
       contents,
       currentVersion,
       currentVersionTip: `The current version is ${currentVersion}`,
@@ -45,20 +42,19 @@ export default class Settings extends React.Component<Props> {
   };
   createBranch = async () => {
     const { gitlabData } = this.props;
-    const { sha } = await getCommit(gitlabData);
-    const { ref } = await createBranch(sha, gitlabData);
-    return { branchName: ref.replace("refs/heads/", "") };
+    const { name } = await createBranch(gitlabData);
+    return { branchName: name };
   };
   changeVersion = async (branch) => {
     const { gitlabData } = this.props;
-    const { version, message, contents, sha } = this.state;
+    const { version, message, contents } = this.state;
     contents.version = version;
-    await updatePackage(message, sha, contents, branch, gitlabData);
+    await updatePackage(message, contents, branch, gitlabData);
   };
   createCommitAndPR = async (branchName) => {
     const { gitlabData } = this.props;
     const { version, message } = this.state;
-    return await createPullRequest(
+    return await createMergeRequest(
       `[figma]:update to ${version}`,
       message,
       branchName,
@@ -120,8 +116,8 @@ export default class Settings extends React.Component<Props> {
         message: "",
         isPushing: false,
         resultTip:
-          "Pushing successfully! You can now go to GitLab and merge this PR. Then your icons will be published to NPM automatically.",
-        prUrl: html_url,
+          "Pushing successfully! You can now go to GitLab and merge this MR. Then your icons will be published to NPM automatically.",
+        mrUrl: html_url,
       });
 
       console.log(version, message);
@@ -150,7 +146,7 @@ export default class Settings extends React.Component<Props> {
       messageTip,
       currentVersionTip,
       resultTip,
-      prUrl,
+      mrUrl,
       webhookData: whd,
       isSending,
     } = this.state;
@@ -173,7 +169,7 @@ export default class Settings extends React.Component<Props> {
               {resultTip}
               <br />
               Click{" "}
-              <a href={prUrl} target="_blank">
+              <a href={mrUrl} target="_blank">
                 here
               </a>{" "}
               to open the PR link.

@@ -7,8 +7,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import * as React from "react";
-import * as ReactDOM from "react-dom";
+import React from "react";
+import ReactDOM from "react-dom";
 import Settings from "./components/Settings";
 import Updator from "./components/Updator";
 import "../assets/ds.css";
@@ -18,7 +18,7 @@ class App extends React.Component {
         super(...arguments);
         this.state = {
             updatorVisible: false,
-            githubData: null,
+            gitlabData: null,
             webhookData: null,
             settingSwitch: false,
             isDone: false,
@@ -26,16 +26,16 @@ class App extends React.Component {
         this.onSucceed = () => {
             this.setState({ isDone: true });
         };
-        this.toggleView = (githubData) => {
+        this.toggleView = (gitlabData) => {
             const { updatorVisible } = this.state;
             this.setState({ updatorVisible: !updatorVisible });
-            if (githubData === true) {
+            if (gitlabData === true) {
                 const { settingSwitch } = this.state;
                 this.setState({ settingSwitch: !settingSwitch });
             }
-            else if (githubData) {
+            else if (gitlabData) {
                 this.setState({
-                    githubData: githubData,
+                    gitlabData,
                 });
             }
         };
@@ -45,11 +45,11 @@ class App extends React.Component {
         window.onmessage = (event) => __awaiter(this, void 0, void 0, function* () {
             const msg = event.data.pluginMessage;
             switch (msg.type) {
-                case "githubDataGot":
-                    if (msg.githubData) {
+                case "gitlabDataGot":
+                    if (msg.gitlabData) {
                         this.setState({
                             updatorVisible: true,
-                            githubData: msg.githubData,
+                            gitlabData: msg.gitlabData,
                         });
                     }
                     break;
@@ -64,16 +64,16 @@ class App extends React.Component {
         });
     }
     render() {
-        const { updatorVisible, githubData, webhookData, settingSwitch, isDone, } = this.state;
-        const tabVisible = githubData && !isDone;
+        const { updatorVisible, gitlabData, webhookData, settingSwitch, isDone } = this.state;
+        const tabVisible = gitlabData && !isDone;
         return (React.createElement("div", { className: "container " + (!tabVisible ? "" : "container-with-tab") },
             React.createElement("div", { className: "bar-adjust " + (tabVisible ? "" : "hide") },
                 React.createElement("div", { className: "adjust-item type type--pos-medium-bold " +
                         (updatorVisible ? "" : "active"), onClick: (e) => this.toggleView() }, "Setting"),
                 React.createElement("div", { className: "adjust-item type type--pos-medium-bold " +
                         (updatorVisible ? "active" : ""), onClick: (e) => this.toggleView(true) }, "Publish")),
-            React.createElement(Settings, { visible: !updatorVisible, githubData: githubData, onGithubSet: this.toggleView, settingSwitch: settingSwitch }),
-            React.createElement(Updator, { onSucceed: this.onSucceed, visible: updatorVisible, githubData: githubData, webhookData: webhookData })));
+            React.createElement(Settings, { visible: !updatorVisible, gitlabData: gitlabData, onGitlabSet: this.toggleView, settingSwitch: settingSwitch }),
+            React.createElement(Updator, { onSucceed: this.onSucceed, visible: updatorVisible, gitlabData: gitlabData, webhookData: webhookData })));
     }
 }
 ReactDOM.render(React.createElement(App, null), document.getElementById("react-page"));
